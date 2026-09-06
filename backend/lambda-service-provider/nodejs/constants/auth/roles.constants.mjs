@@ -1,0 +1,12 @@
+export const AUTH_TYPE = {
+  EMAIL: "EMAIL",
+  OAUTH: "OAUTH",
+};
+
+export const USER_ROLES = {
+  ADMIN: "ADMIN",
+  CLINIC: "CLINIC",
+  MANAGER: "MANAGER",
+  SPECIALIST: "SPECIALIST",
+  PATIENT: "PATIENT",
+};

@@ -1,0 +1,1062 @@
+// Prisma schema for Cosmediate
+// Docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lambda-node-packages/prisma/nodejs/node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/**
+ * ========================================================================================
+ * AUTH DOMAIN
+ * - Identity is the single source of truth for authentication.
+ * - One row per human. Profile tables (Admin/Specialist/ClinicManager/Patient) reference
+ * this via `identityId @unique`.
+ * - `role` + `entityId` are denormalized routing pointers (NOT source of truth) populated
+ * by `createIdentityWithProfile` / `removeProfile` inside a transaction.
+ * - Source of truth for the relationship is the FK on the profile side.
+ * ========================================================================================
+ */
+
+model Identity {
+  id         String  @id @default(cuid())
+  cognitoSub String  @unique
+  email      String  @unique
+  phone      String?
+
+  status USER_STATUS @default(UNCONFIRMED)
+
+  defaultPasswordUsed Boolean  @default(false)
+  passwordSet         Boolean  @default(false)
+  linkedProviders     String[] @default([])
+  perms               String[] @default([])
+
+  // Hint columns — denormalized pointer for fast auth-path routing. NOT source of truth.
+  // Written ONLY by createIdentityWithProfile / removeProfile, always in $transaction.
+  role     ROLE?
+  entityId String?
+
+  lastLoginAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  deleted     Boolean   @default(false)
+
+  admin         Admin?
+  specialist    Specialist?
+  clinicManager ClinicManager?
+  patient       Patient?
+
+  announcementDismissals AnnouncementDismissal[]
+
+  @@index([email])
+  @@index([role, entityId])
+}
+
+model Admin {
+  id         String   @id @default(cuid())
+  identityId String   @unique
+  identity   Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+
+  firstName String
+  lastName  String
+  fullName  String
+  age       Int?
+  gender    String?
+
+  image String?
+
+  country         String?
+  state           String?
+  city            String?
+  completeAddress String?
+  postalCode      String?
+  lat             Float?
+  lon             Float?
+
+  entityType String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+}
+
+model Patient {
+  id         String   @id @default(cuid())
+  identityId String   @unique
+  identity   Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+
+  firstName String
+  lastName  String
+  fullName  String
+  age       Int?
+  gender    String?
+
+  image String?
+
+  country         String?
+  state           String?
+  city            String?
+  completeAddress String?
+  postalCode      String?
+  lat             Float?
+  lon             Float?
+
+  entityType String
+
+  /// How this patient profile was first provisioned (independent of junction link sources).
+  creationSource PatientCreationSource @default(SELF_SIGNUP)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  patientClinics     PatientClinic[]
+  patientSpecialists PatientSpecialist[]
+}
+
+enum PatientCreationSource {
+  ADMIN
+  SELF_SIGNUP
+  MANAGER
+  SPECIALIST
+}
+
+/**
+ * ===================================================
+ * CLINIC DOMAIN
+ * ===================================================
+ */
+
+model Clinic {
+  id String @id @default(cuid())
+
+  email     String  @unique
+  name      String
+  phone     String?
+  clinicAge String?
+
+  clinicType CLINIC_TYPE
+
+  logo   String?
+  images String[] @default([])
+
+  htmlAbout Json?
+  overview  String?
+
+  instagramId String?
+  website     String?
+
+  country         String?
+  state           String?
+  city            String?
+  completeAddress String?
+  postalCode      String?
+  lat             Float?
+  lon             Float?
+
+  status    CLINIC_STATUS @default(ACTIVE)
+  available Boolean       @default(false)
+
+  faqs         Json?
+  tags         Json?
+  workingHours Json?
+  certificates Json?
+
+  reviewCount Int   @default(0)
+  ratingSum   Float @default(0.0)
+  avgRating   Float @default(0.0)
+  avgPrice    Float @default(0.0)
+  minPrice    Float @default(0.0)
+  maxPrice    Float @default(0.0)
+
+  entityType String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  parentClinicId String?
+  categories     ClinicCategoryLink[]
+  managers       ClinicManagerLink[]
+  parentClinic   Clinic?              @relation("ClinicHierarchy", fields: [parentClinicId], references: [id])
+  nodes          Clinic[]             @relation("ClinicHierarchy")
+
+  specialists                ClinicSpecialistLink[]
+  clinicTreatments           ClinicTreatment[]
+  clinicSpecialistTreatments ClinicSpecialistTreatment[]
+
+  patientClinics PatientClinic[]
+
+  lead   Lead?   @relation(fields: [leadId], references: [id])
+  leadId String? @unique
+
+  @@index([email, name])
+}
+
+model ClinicCategory {
+  id        String  @id @default(cuid())
+  name      String  @unique()
+  published Boolean @default(true)
+
+  entityType String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  clinics ClinicCategoryLink[]
+
+  @@index([name, published])
+}
+
+model ClinicManager {
+  id         String   @id @default(cuid())
+  identityId String   @unique
+  identity   Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+
+  firstName String
+  lastName  String
+  fullName  String
+  age       Int?
+  gender    String?
+
+  image String?
+
+  country         String?
+  state           String?
+  city            String?
+  completeAddress String?
+  postalCode      String?
+  lat             Float?
+  lon             Float?
+
+  entityType String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  // Multi-clinic access via link table. No "owner" relation.
+  clinics ClinicManagerLink[]
+}
+
+/**
+ * ===================================================
+ * CLINIC JOIN TABLES
+ * ===================================================
+ */
+
+model ClinicManagerLink {
+  clinicId  String
+  managerId String
+
+  clinic  Clinic        @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  manager ClinicManager @relation(fields: [managerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@id([clinicId, managerId])
+  @@index([managerId])
+}
+
+model ClinicCategoryLink {
+  clinicId   String
+  categoryId String
+
+  clinic   Clinic         @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  category ClinicCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@id([clinicId, categoryId])
+  @@index([categoryId, clinicId])
+}
+
+enum CLINIC_TYPE {
+  PARENT
+  NODE
+}
+
+enum CLINIC_STATUS {
+  ACTIVE
+  BLOCKED
+  PENDING
+}
+
+/**
+ * ===================================================
+ * SPECIALIST DOMAIN
+ * ===================================================
+ */
+
+model Specialist {
+  id         String   @id @default(cuid())
+  identityId String   @unique
+  identity   Identity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+
+  image     String?
+  firstName String
+  lastName  String
+  fullName  String
+  age       Int?
+  gender    String?
+
+  totalExperience Int?
+  htmlAbout       Json?
+  overview        String?
+  workingType     WORKING_TYPES? @default(FULL_TIME)
+  instagramId     String?
+  website         String?
+
+  faqs         Json?
+  tags         Json?
+  workingHours Json?
+  certificates Json?
+
+  country         String?
+  state           String?
+  city            String?
+  completeAddress String?
+  postalCode      String?
+  lat             Float?
+  lon             Float?
+
+  // Status here is specialist-domain (active/blocked/pending), not auth status.
+  // Auth status lives on Identity.status.
+  status SPECIALIST_STATUS @default(ACTIVE)
+
+  available  Boolean @default(false)
+  entityType String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  reviewCount Int   @default(0)
+  ratingSum   Float @default(0.0)
+  avgRating   Float @default(0.0)
+  avgPrice    Float @default(0.0)
+  minPrice    Float @default(0.0)
+  maxPrice    Float @default(0.0)
+
+  clinics                    ClinicSpecialistLink[]
+  clinicSpecialistTreatments ClinicSpecialistTreatment[]
+  patientSpecialists         PatientSpecialist[]
+
+  lead   Lead?   @relation(fields: [leadId], references: [id])
+  leadId String? @unique
+}
+
+/**
+ * ===================================================
+ * SPECIALIST JOIN TABLES
+ * ===================================================
+ */
+
+model ClinicSpecialistLink {
+  specialistId String
+  clinicId     String
+
+  associationType SPECIALIST_CLINIC_ASSOCIATION @default(FREELANCE)
+  /// Exactly one ACTIVE primary link expected per specialist (typically FULL_TIME primary clinic).
+  isPrimary       Boolean                       @default(false)
+  status          SPECIALIST_CLINIC_LINK_STATUS @default(ACTIVE)
+
+  clinic     Clinic     @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  specialist Specialist @relation(fields: [specialistId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([clinicId, specialistId])
+  @@index([specialistId, clinicId])
+  @@index([specialistId, isPrimary])
+  @@index([clinicId, associationType])
+}
+
+enum SPECIALIST_CLINIC_ASSOCIATION {
+  FULL_TIME
+  FREELANCE
+}
+
+enum SPECIALIST_CLINIC_LINK_STATUS {
+  ACTIVE
+  INACTIVE
+}
+
+enum WORKING_TYPES {
+  FULL_TIME
+  FREELANCE
+}
+
+enum SPECIALIST_STATUS {
+  ACTIVE
+  BLOCKED
+  PENDING
+}
+
+/**
+ * ===================================================
+ * PATIENT ↔ CLINIC / SPECIALIST (junction — Sprint S1
+ * ===================================================
+ */
+
+enum PatientRelationSource {
+  CLINIC_CREATE
+  SPECIALIST_FULLTIME_CREATE
+  SPECIALIST_FREELANCE_CREATE
+  APPOINTMENT
+}
+
+model PatientClinic {
+  id        String @id @default(cuid())
+  patientId String
+  clinicId  String
+
+  source PatientRelationSource
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  clinic  Clinic  @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@unique([patientId, clinicId])
+  @@index([clinicId])
+  @@index([patientId])
+}
+
+model PatientSpecialist {
+  id           String @id @default(cuid())
+  patientId    String
+  specialistId String
+
+  source PatientRelationSource
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  patient    Patient    @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  specialist Specialist @relation(fields: [specialistId], references: [id], onDelete: Cascade)
+
+  @@unique([patientId, specialistId])
+  @@index([specialistId])
+  @@index([patientId])
+}
+
+/**
+ * ===================================================
+ * TREATMENT DOMAIN
+ * ===================================================
+ */
+
+model TreatmentCategory {
+  id        String  @id @default(cuid())
+  name      String  @unique()
+  published Boolean @default(true)
+
+  entityType String
+
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  deletedAt  DateTime?
+  deleted    Boolean     @default(false)
+  treatments Treatment[]
+
+  @@index([name, published])
+}
+
+model TreatmentBrand {
+  id        String  @id @default(cuid())
+  name      String  @unique()
+  published Boolean @default(true)
+
+  entityType String
+
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  deletedAt          DateTime?
+  deleted            Boolean             @default(false)
+  subTreatmentBrands SubTreatmentBrand[]
+
+  @@index([name, published])
+}
+
+model Treatment {
+  id         String @id @default(cuid())
+  categoryId String
+
+  name            String
+  image           String?
+  htmlDescription Json?
+  overview        String?
+  recoveryTime    String?
+  anesthesia      String?
+
+  faqs Json?
+  tags Json?
+
+  published Boolean @default(true)
+
+  entityType String
+
+  avgPrice Float @default(0.0)
+  minPrice Float @default(0.0)
+  maxPrice Float @default(0.0)
+
+  authorId    String
+  authorName  String
+  authorEmail String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  category                   TreatmentCategory           @relation(fields: [categoryId], references: [id])
+  clinicTreatments           ClinicTreatment[]
+  clinicSpecialistTreatments ClinicSpecialistTreatment[]
+  treatmentResults           TreatmentResult[]
+
+  @@index([categoryId, published])
+  @@index([name])
+  @@index([authorId])
+}
+
+/**
+ * ===================================================
+ * CLINIC TREATMENT HUB (Phase 6)
+ * ===================================================
+ */
+enum CLINIC_TREATMENT_STATUS {
+  ACTIVE
+  INACTIVE
+}
+
+enum CLINIC_SPECIALIST_TREATMENT_STATUS {
+  ACTIVE
+  INACTIVE
+}
+
+/// Clinic offering — sub-treatments, results, and assignments hang from this row.
+model ClinicTreatment {
+  id          String @id @default(cuid())
+  clinicId    String
+  treatmentId String
+
+  status CLINIC_TREATMENT_STATUS @default(ACTIVE)
+
+  name  String?
+  image String?
+
+  categoryId        String
+  categoryName      String
+  treatmentName     String
+  treatmentImage    String?
+  treatmentOverview String?
+
+  avgPrice Float @default(0.0)
+  minPrice Float @default(0.0)
+  maxPrice Float @default(0.0)
+
+  entityType String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  clinic                     Clinic                      @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  treatment                  Treatment                   @relation(fields: [treatmentId], references: [id], onDelete: Cascade)
+  subTreatments              SubTreatment[]
+  treatmentResults           TreatmentResult[]
+  clinicSpecialistTreatments ClinicSpecialistTreatment[]
+
+  @@unique([clinicId, treatmentId])
+  @@index([clinicId, status])
+  @@index([treatmentId])
+  @@index([categoryId])
+}
+
+/// Specialist assignment to a clinic offering (bookable link).
+model ClinicSpecialistTreatment {
+  id String @id @default(cuid())
+
+  clinicTreatmentId String
+  specialistId      String
+
+  clinicId    String
+  treatmentId String
+
+  categoryId        String
+  categoryName      String
+  treatmentName     String
+  treatmentImage    String?
+  treatmentOverview String?
+
+  specialistExperience String                             @default("")
+  status               CLINIC_SPECIALIST_TREATMENT_STATUS @default(ACTIVE)
+  available            Boolean                            @default(false)
+
+  entityType String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  clinicTreatment ClinicTreatment @relation(fields: [clinicTreatmentId], references: [id], onDelete: Cascade)
+  specialist      Specialist      @relation(fields: [specialistId], references: [id], onDelete: Cascade)
+  clinic          Clinic          @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  treatment       Treatment       @relation(fields: [treatmentId], references: [id], onDelete: Cascade)
+
+  @@unique([specialistId, clinicTreatmentId])
+  @@index([clinicId])
+  @@index([clinicId, status])
+  @@index([specialistId])
+  @@index([specialistId, status])
+  @@index([clinicTreatmentId])
+  @@index([treatmentId])
+  @@index([categoryId])
+}
+
+model SubTreatment {
+  id                String @id @default(cuid())
+  clinicTreatmentId String
+
+  clinicId     String
+  treatmentId  String
+  categoryId   String
+  categoryName String
+
+  name      String
+  price     Float
+  duration  String
+  available Boolean @default(false)
+
+  entityType String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  clinicTreatment ClinicTreatment @relation(fields: [clinicTreatmentId], references: [id], onDelete: Cascade)
+
+  brands SubTreatmentBrand[]
+
+  @@index([clinicTreatmentId])
+  @@index([clinicId])
+  @@index([treatmentId])
+}
+
+model SubTreatmentBrand {
+  subTreatmentId String
+  brandId        String
+
+  subTreatment SubTreatment   @relation(fields: [subTreatmentId], references: [id], onDelete: Cascade)
+  brand        TreatmentBrand @relation(fields: [brandId], references: [id], onDelete: Cascade)
+
+  @@id([subTreatmentId, brandId])
+}
+
+model TreatmentResult {
+  id String @id @default(cuid())
+
+  ownerType TREATMENT_RESULT_OWNER @default(CLINIC)
+
+  clinicTreatmentId String?
+  clinicId          String?
+  treatmentId       String?
+  categoryId        String?
+  categoryName      String?
+
+  beforeImage String
+  afterImage  String
+  description String?
+
+  entityType String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  treatment       Treatment?       @relation(fields: [treatmentId], references: [id], onDelete: Cascade)
+  clinicTreatment ClinicTreatment? @relation(fields: [clinicTreatmentId], references: [id], onDelete: Cascade)
+
+  @@index([clinicTreatmentId])
+  @@index([clinicId])
+  @@index([treatmentId])
+}
+
+enum TREATMENT_RESULT_OWNER {
+  ADMIN
+  CLINIC
+}
+
+/**
+ * ===================================================
+ * REVIEW DOMAIN
+ * ===================================================
+ */
+
+model Review {
+  id String @id @default(cuid())
+
+  targetEntityType      REVIEW_TARGET_TYPE
+  targetEntityId        String
+  targetName            String
+  targetEmail           String
+  targetImage           String?
+  targetCompleteAddress String?
+
+  authorId              String
+  authorRole            String
+  authorName            String
+  authorEmail           String
+  authorImage           String?
+  authorCompleteAddress String?
+
+  rating  Int
+  comment String? @db.Text
+
+  status REVIEW_STATUS @default(PENDING)
+
+  entityType String
+  replyCount Int    @default(0)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  replies ReviewReply[]
+
+  @@index([targetEntityType, targetEntityId])
+  @@index([authorId])
+  @@index([status])
+}
+
+model ReviewReply {
+  id String @id @default(cuid())
+
+  reviewId String
+
+  targetEntityType      REVIEW_TARGET_TYPE
+  targetEntityId        String
+  targetName            String
+  targetEmail           String
+  targetImage           String?
+  targetCompleteAddress String?
+
+  authorId              String
+  authorRole            REVIEW_REPLY_AUTHOR_ROLE
+  authorName            String
+  authorEmail           String
+  authorImage           String?
+  authorCompleteAddress String?
+
+  comment String @db.Text
+
+  status REVIEW_STATUS
+
+  entityType String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
+  @@index([reviewId])
+  @@index([targetEntityType, targetEntityId])
+  @@index([authorRole, authorId])
+}
+
+enum REVIEW_STATUS {
+  PENDING
+  PUBLISHED
+  HIDDEN
+  DELETED
+}
+
+enum REVIEW_TARGET_TYPE {
+  CLINIC
+  SPECIALIST
+}
+
+enum REVIEW_REPLY_AUTHOR_ROLE {
+  CLINIC
+  SPECIALIST
+  ADMIN
+}
+
+/**
+ * ===================================================
+ * BLOG DOMAIN
+ * ===================================================
+ */
+
+model BlogCategory {
+  id        String  @id @default(cuid())
+  name      String  @unique()
+  published Boolean @default(true)
+
+  entityType String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  blogs Blog[]
+
+  @@index([name, published])
+}
+
+model Blog {
+  id         String @id @default(cuid())
+  categoryId String
+
+  title    String
+  overview String?
+  image    String?
+  content  Json?
+
+  status      BLOG_STATUS @default(DRAFT)
+  publishedAt DateTime?
+  tags        String[]
+
+  entityType String
+
+  authorId    String
+  authorName  String
+  authorEmail String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  category BlogCategory @relation(fields: [categoryId], references: [id])
+
+  @@index([categoryId])
+  @@index([status, publishedAt])
+  @@index([createdAt])
+  @@index([authorId])
+}
+
+enum BLOG_STATUS {
+  DRAFT
+  PUBLISHED
+  HIDDEN
+}
+
+/**
+ * ===================================================
+ * LEADS DOMAIN
+ * ===================================================
+ */
+model Lead {
+  id                 String     @id @default(cuid())
+  type               LeadType
+  email              String
+  fullName           String?
+  firstName          String?
+  lastName           String?
+  phone              String?
+  country            String?
+  state              String?
+  city               String?
+  postalCode         String?
+  completeAddress    String?
+  subject            String?
+  message            String?
+  registrationNumber String?
+  companyName        String?
+  status             LeadStatus @default(NEW)
+  source             LeadSource
+  metadata           Json?
+
+  specialist Specialist?
+  clinic     Clinic?
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  @@index([type])
+}
+
+enum LeadSource {
+  CONTACT_US_PAGE
+  SUBSCRIPTION
+  REGISTER_DOCTOR_FORM
+  REGISTER_CLINIC_FORM
+  FACEBOOK_AD
+  GOOGLE_AD
+  ORGANIC_SEARCH
+  PARTNER_REFERRAL
+  NEWSLETTER_CAMPAIGN
+}
+
+enum LeadType {
+  CONTACT
+  DOCTOR
+  CLINIC
+  SUBSCRIPTION
+}
+
+enum LeadStatus {
+  NEW
+  PENDING_REVIEW
+  CONTACTED
+  QUALIFIED
+  CONVERTED
+  ARCHIVED
+  REJECTED
+}
+
+/**
+ * ===================================================
+ * NOTIFICATIONS DOMAIN
+ * - Announcements: admin-managed banners (Postgres + OpenSearch).
+ * - AnnouncementDismissal: per-identity dismiss state for dismissible banners.
+ * - SystemSetting: singleton platform ops config (maintenance mode, feature flags).
+ * ===================================================
+ */
+
+model Announcement {
+  id String @id @default(cuid())
+
+  title    String
+  message  String
+  severity ANNOUNCEMENT_SEVERITY @default(INFO)
+  status   ANNOUNCEMENT_STATUS   @default(DRAFT)
+
+  priority       Int       @default(0)
+  startsAt       DateTime?
+  endsAt         DateTime?
+  dismissible    Boolean   @default(true)
+  targetRoles    ROLE[]    @default([])
+  targetSurfaces String[]  @default([])
+
+  actionLabel String?
+  actionUrl   String?
+
+  searchClicks Int @default(0)
+
+  entityType String
+
+  authorId    String
+  authorName  String
+  authorEmail String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  deleted   Boolean   @default(false)
+
+  dismissals AnnouncementDismissal[]
+
+  @@index([status, startsAt, endsAt])
+  @@index([createdAt])
+  @@index([authorId])
+}
+
+model AnnouncementDismissal {
+  id String @id @default(cuid())
+
+  announcementId String
+  identityId     String
+
+  dismissedAt DateTime @default(now())
+
+  announcement Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  identity     Identity     @relation(fields: [identityId], references: [id], onDelete: Cascade)
+
+  @@unique([announcementId, identityId])
+  @@index([identityId])
+}
+
+model SystemSetting {
+  id String @id @default("default")
+
+  maintenanceMode             Boolean @default(false)
+  maintenanceMessage          String?
+  maintenanceAllowAdminAccess Boolean @default(true)
+  featureFlags                Json    @default("{}")
+
+  updatedBy String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ANNOUNCEMENT_SEVERITY {
+  INFO
+  SUCCESS
+  WARNING
+  ERROR
+}
+
+enum ANNOUNCEMENT_STATUS {
+  DRAFT
+  ACTIVE
+  EXPIRED
+}
+
+/**
+ * ===================================================
+ * ENTITY SEARCH STATS
+ * ===================================================
+ */
+
+model EntitySearchStat {
+  id         String @id @default(cuid())
+  entityType String
+
+  targetEntityType String
+  targetEntityId   String
+  searchClicks     Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([targetEntityType, targetEntityId])
+  @@index([targetEntityType, searchClicks])
+}
+
+/**
+ * ===================================================
+ * SHARED ENUMS
+ * ===================================================
+ */
+
+enum USER_STATUS {
+  ACTIVE
+  BLOCKED
+  UNCONFIRMED
+  PENDING
+}
+
+enum ROLE {
+  ADMIN
+  MANAGER
+  SPECIALIST
+  PATIENT
+}

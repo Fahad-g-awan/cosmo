@@ -1,0 +1,29 @@
+{
+  "name": "@cosmediate/type-utils",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "peerDependencies": {
+    "next": "16.1.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@cosmediate/eslint-config": "workspace:*",
+    "@cosmediate/typescript-config": "workspace:*",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9.32.0",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@tiptap/react": "^3.14.0",
+    "axios": "^1.13.2"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Cosmediate Backend (editor-only)",
+
+  "compilerOptions": {
+    /* Runtime */
+    "target": "ES2022",
+    "module": "ESNext",
+    // "moduleResolution": "node",
+    "lib": ["ES2022"],
+    "types": ["node"],
+
+    /* JS support */
+    "allowJs": true,
+    "checkJs": true,
+    "maxNodeModuleJsDepth": 0,
+
+    /* What you actually want warnings for */
+    "strict": false,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Performance killers turned OFF */
+    "declaration": false,
+    "declarationMap": false,
+    "incremental": false,
+    "composite": false,
+
+    /* Editor sanity */
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true
+  },
+
+  "include": [
+    "modules/**/*.{js,mjs}",
+    "lambdalayer/**/*.{js,mjs}",
+    "prisma.config.ts"
+  ],
+
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".next",
+    "coverage",
+    "lambdalayerPackages",
+    "prisma/migrations"
+  ]
+}

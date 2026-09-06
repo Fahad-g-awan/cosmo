@@ -1,0 +1,33 @@
+{
+  "name": "@cosmediate/browse-manager",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "eslint . --max-warnings 0"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./filters": "./src/filters/index.ts",
+    "./preferences": "./src/preferences/index.ts",
+    "./pagination": "./src/pagination/index.ts",
+    "./coordinator": "./src/coordinator/index.ts",
+    "./utils/*": "./src/utils/*.ts",
+    "./hooks/*": "./src/hooks/*.ts"
+  },
+  "peerDependencies": {
+    "next": "16.1.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "@cosmediate/auth": "workspace:*"
+  },
+  "devDependencies": {
+    "@cosmediate/eslint-config": "workspace:*",
+    "@cosmediate/typescript-config": "workspace:*",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9.32.0",
+    "typescript": "^5.9.2"
+  }
+}

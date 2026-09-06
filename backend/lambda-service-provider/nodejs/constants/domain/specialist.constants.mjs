@@ -1,0 +1,5 @@
+export const SPECIALIST_STATUS = {
+  ACTIVE: "ACTIVE",
+  BLOCKED: "BLOCKED",
+  PENDING: "PENDING",
+};

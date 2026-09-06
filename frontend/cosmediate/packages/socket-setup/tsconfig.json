@@ -1,0 +1,12 @@
+{
+  "extends": "@cosmediate/typescript-config/react-library.json",
+  "compilerOptions": {
+    "composite": true,
+    "incremental": true,
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "include": ["src"]
+}

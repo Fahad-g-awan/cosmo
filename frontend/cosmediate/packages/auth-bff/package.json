@@ -1,0 +1,26 @@
+{
+  "name": "@cosmediate/auth-bff",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@cosmediate/api": "workspace:*",
+    "@cosmediate/config": "workspace:*",
+    "@cosmediate/type-utils": "workspace:*"
+  },
+  "peerDependencies": {
+    "next": "16.1.0"
+  },
+  "devDependencies": {
+    "@cosmediate/eslint-config": "workspace:*",
+    "@cosmediate/typescript-config": "workspace:*",
+    "@types/node": "^20",
+    "eslint": "^9.32.0",
+    "typescript": "^5.9.2"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

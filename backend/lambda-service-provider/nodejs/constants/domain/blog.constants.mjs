@@ -1,0 +1,5 @@
+export const BLOG_STATUS = {
+  DRAFT: "DRAFT",
+  PUBLISHED: "PUBLISHED",
+  HIDDEN: "HIDDEN",
+};

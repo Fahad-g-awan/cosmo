@@ -1,0 +1,30 @@
+{
+  "name": "@cosmediate/api",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/types/auth.types.ts"
+  },
+  "peerDependencies": {
+   "next": "16.1.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@cosmediate/eslint-config": "workspace:*",
+    "@cosmediate/typescript-config": "workspace:*",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9.32.0",
+    "typescript": "^5.9.2"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@cosmediate/type-utils": "workspace:*",
+    "axios": "^1.13.2"
+  }
+}

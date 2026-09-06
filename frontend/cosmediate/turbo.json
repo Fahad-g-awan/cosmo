@@ -1,0 +1,53 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "globalEnv": [
+    "NODE_ENV",
+    "DEBUG_AUTH",
+    "AUTH_REDIRECT_PATH",
+    "AUTH_SELF_URL",
+    "AUTH_PROVIDER_URL",
+    "NEXT_PUBLIC_AUTH_PROVIDER_URL",
+    "AUTH_CLIENT_ID",
+    "AUTH_CLIENT_SECRET",
+    "AWS_REGION",
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_ACCESS_KEY",
+    "AWS_SESSION_TOKEN",
+    "DYNAMODB_AUTH_TABLE_NAME",
+    "DYNAMODB_CLIENT_TABLE_NAME",
+    "COGNITO_OAUTH_REDIRECT_URI",
+    "NEXT_PUBLIC_COGNITO_OAUTH_REDIRECT_URI",
+    "NEXT_PUBLIC_COGNITO_APP_CLIENT_ID",
+    "NEXT_PUBLIC_COGNITO_DOMAIN",
+    "NEXT_PUBLIC_COGNITO_OAUTH_PATH",
+    "NEXT_PUBLIC_SOCKET_URL",
+    "AUTH_APP_TOKEN_ENDPOINT",
+    "AUTH_APP_LOGOUT_ENDPOINT",
+    "AUTH_APP_AUTHORIZE_ENDPOINT",
+    "AUTH_APP_REFRESH_ENDPOINT",
+    "NEXT_PUBLIC_AUTH_EXCHANGE_CODE_PATH",
+    "NEXT_PUBLIC_GOOGLE_PLACES_API_KEY",
+    "NEXT_PUBLIC_AUTH_HEARTBEAT",
+    "GOOGLE_PLACES_API_URL",
+    "GOOGLE_PLACES_API_KEY"
+  ],
+  "globalDependencies": [".env*"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "check-types": {
+      "dependsOn": ["^check-types"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

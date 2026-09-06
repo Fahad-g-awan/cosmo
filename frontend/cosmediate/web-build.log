@@ -1,0 +1,15 @@
+﻿Γû▓ Next.js 16.1.0 (Turbopack)
+- Environments: .env.local, .env.production
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 19.9s
+  Running TypeScript ...
+  Collecting page data using 7 workers ...
+node.exe : Γ¿» Invalid segment configuration export detected. This can cause unexpected behavior from the configs not 
+being applied. You should see the relevant failures in the logs above. Please fix them to continue.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Γ¿» Invalid seg...em to continue.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

@@ -1,0 +1,40 @@
+{
+  "name": "@cosmediate/auth",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./AuthProvider": "./src/context/AuthProvider.tsx",
+    "./hooks/*": "./src/hooks/*.ts",
+    "./lib/*": "./src/lib/*.ts"
+  },
+  "dependencies": {
+    "@cosmediate/api": "workspace:*",
+    "@cosmediate/config": "workspace:*",
+    "@cosmediate/i18n": "workspace:*",
+    "@cosmediate/type-utils": "workspace:*",
+    "@cosmediate/ui": "workspace:*",
+    "js-cookie": "^3.0.5",
+    "lucide-react": "^0.475.0"
+  },
+  "peerDependencies": {
+    "@cosmediate/i18n": "workspace:*",
+    "next": "16.1.0",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@cosmediate/eslint-config": "workspace:*",
+    "@cosmediate/typescript-config": "workspace:*",
+    "@types/js-cookie": "^3.0.6",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "axios": "^1.13.2",
+    "eslint": "^9.32.0",
+    "typescript": "^5.9.2"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

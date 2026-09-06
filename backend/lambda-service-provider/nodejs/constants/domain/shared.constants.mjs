@@ -1,0 +1,4 @@
+export const WORKING_TYPES = {
+  FULL_TIME: "FULL_TIME",
+  FREELANCE: "FREELANCE",
+};

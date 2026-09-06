@@ -1,0 +1,27 @@
+{
+  "name": "@cosmediate/reviews-core",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./hooks/*": "./src/hooks/*.ts",
+    "./lib/*": "./src/lib/*.ts"
+  },
+  "dependencies": {
+    "@cosmediate/api": "workspace:*",
+    "@cosmediate/socket-setup": "workspace:*",
+    "@cosmediate/type-utils": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@cosmediate/eslint-config": "workspace:*",
+    "@cosmediate/typescript-config": "workspace:*",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "eslint": "^9.32.0",
+    "typescript": "^5.9.2"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "extends": "@cosmediate/typescript-config/nextjs.json",
+  "compilerOptions": {
+    // "baseUrl": ".",
+    "paths": {
+      "@app/*": ["./src/*"],
+      "@app/types/*": ["./src/types/*"],
+      "@app/lib/*": ["./src/lib/*"],
+      "@app/hooks/*": ["./src/hooks/*"],
+      "@app/context/*": ["./src/context/*"],
+      "@app/components/*": ["./src/components/*"],
+      "@app/patient/*": ["./src/tenants/patient/*"],
+      "@app/clinic/*": ["./src/tenants/Clinic/*"],
+      "@app/admin/*": ["./src/tenants/Admin/*"],
+
+      "@cosmediate/ui/globals.css": [
+        "../../packages/ui/src/styles/globals.css"
+      ],
+      "@cosmediate/ui/tiptap.css": [
+        "../../packages/ui/src/styles/tiptap.css"
+      ],
+      "@cosmediate/ui/tabs.css": ["../../packages/ui/src/styles/tabs.css"],
+      "@cosmediate/ui/*": ["../../packages/ui/src/*"],
+
+      "@cosmediate/auth/*": ["../../packages/auth/src/*"],
+      "@auth-core/*": ["../../packages/auth/src/*"],
+
+      "@cosmediate/api/*": ["../../packages/api/src/*"],
+      "@cosmediate/type-utils/*": ["../../packages/type-utils/src/*"],
+      "@cosmediate/header/*": ["../../packages/header/src/*"],
+      "@cosmediate/footer/*": ["../../packages/footer/src/*"]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "types": ["node"]
+  },
+  "include": [
+    "next-env.d.ts",
+    "../../packages/typescript-config/css.d.ts",
+    "next.config.mjs",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "../../packages/ui/src/hooks/useWindowWidth.ts",
+    "tailwind.config.js"
+  ],
+  "exclude": ["node_modules"]
+}

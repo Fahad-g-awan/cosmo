@@ -1,0 +1,48 @@
+{
+  "extends": "@cosmediate/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "paths": {
+      "@blog/*": ["./src/*"],
+      "@blog/features/*": ["./src/features/*"],
+      "@blog/types/*": ["./src/types/*"],
+      "@blog/lib/*": ["./src/lib/*"],
+      "@blog/hooks/*": ["./src/hooks/*"],
+      "@blog/context/*": ["./src/context/*"],
+      "@blog/components/*": ["./src/components/*"],
+      "@blog/layout/*": ["./src/layout/*"],
+
+      "@cosmediate/ui/globals.css": [
+        "../../packages/ui/src/styles/globals.css"
+      ],
+      "@cosmediate/ui/tiptap.css": [
+        "../../packages/ui/src/styles/tiptap.css"
+      ],
+      "@cosmediate/ui/tabs.css": ["../../packages/ui/src/styles/tabs.css"],
+      "@cosmediate/ui/*": ["../../packages/ui/src/*"],
+
+      "@cosmediate/auth/*": ["../../packages/auth/src/*"],
+      "@auth-core/*": ["../../packages/auth/src/*"],
+
+      "@cosmediate/api/*": ["../../packages/api/src/*"],
+      "@cosmediate/type-utils/*": ["../../packages/type-utils/src/*"],
+      "@cosmediate/header/*": ["../../packages/header/src/*"],
+      "@cosmediate/footer/*": ["../../packages/footer/src/*"]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "types": ["node"]
+  },
+  "include": [
+    "next-env.d.ts",
+    "global.d.ts",
+    "../../packages/typescript-config/css.d.ts",
+    "next.config.mjs",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
+}

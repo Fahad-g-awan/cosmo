@@ -1,0 +1,15 @@
+{
+  "extends": "@cosmediate/typescript-config/react-library.json",
+  "compilerOptions": {
+    // "jsx": "react-jsx",
+    // "baseUrl": ".",
+    "types": ["node"],
+    "paths": {
+      "@auth-core/*": ["./src/*"],
+      "@auth-core/hooks/*": ["./src/hooks/*"],
+      "@auth-core/lib/*": ["./src/lib/*"]
+    }
+  },
+  "include": ["."],
+  "exclude": ["node_modules", "dist"]
+}

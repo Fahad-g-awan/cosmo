@@ -1,0 +1,15 @@
+export const CLINIC_TYPES = {
+  PARENT: "PARENT",
+  NODE: "NODE",
+};
+
+export const CLINIC_STATUS = {
+  ACTIVE: "ACTIVE",
+  BLOCKED: "BLOCKED",
+  PENDING: "PENDING",
+};
+
+export const CLINIC_CATEGORY_STATUS = {
+  PUBLISHED: "PUBLISHED",
+  DRAFT: "DRAFT",
+};

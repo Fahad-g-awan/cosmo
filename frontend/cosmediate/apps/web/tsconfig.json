@@ -1,0 +1,50 @@
+{
+  "extends": "@cosmediate/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "paths": {
+      "@web/*": ["./src/*"],
+      "@web/features/*": ["./src/features/*"],
+      "@web/types/*": ["./src/types/*"],
+      "@web/lib/*": ["./src/lib/*"],
+      "@web/hooks/*": ["./src/hooks/*"],
+      "@web/context/*": ["./src/context/*"],
+      "@web/components/*": ["./src/components/*"],
+      "@web/layout/*": ["./src/layout/*"],
+      "@web/services/*": ["./src/services/*"],
+      "@web/modules/*": ["./src/modules/*"],
+
+      "@cosmediate/ui/globals.css": [
+        "../../packages/ui/src/styles/globals.css"
+      ],
+      "@cosmediate/ui/tiptap.css": [
+        "../../packages/ui/src/styles/tiptap.css"
+      ],
+      "@cosmediate/ui/tabs.css": ["../../packages/ui/src/styles/tabs.css"],
+      "@cosmediate/ui/*": ["../../packages/ui/src/*"],
+
+      "@cosmediate/auth/*": ["../../packages/auth/src/*"],
+      "@auth-core/*": ["../../packages/auth/src/*"],
+
+      "@cosmediate/api/*": ["../../packages/api/src/*"],
+      "@cosmediate/type-utils/*": ["../../packages/type-utils/src/*"],
+      "@cosmediate/header/*": ["../../packages/header/src/*"],
+      "@cosmediate/footer/*": ["../../packages/footer/src/*"]
+    },
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "types": ["node", "google.maps"]
+  },
+  "include": [
+    "next-env.d.ts",
+    "global.d.ts",
+    "../../packages/typescript-config/css.d.ts",
+    "next.config.mjs",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
+}

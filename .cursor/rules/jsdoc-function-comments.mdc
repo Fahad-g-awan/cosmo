@@ -1,0 +1,42 @@
+---
+globs: backend/**/*.mjs
+alwaysApply: false
+---
+
+# JSDoc function comments
+
+Every exported function needs a **definition** (what it does), not only `@param` / `@returns`.
+
+## Simple functions
+
+One short definition line, then `@param` / `@returns`:
+
+```javascript
+/**
+ * Normalize and deduplicate email addresses (trimmed, lowercased).
+ *
+ * @param {string[]} emails
+ * @returns {string[]}
+ */
+export const dedupeEmails = (emails) => { ... };
+```
+
+## Complex functions
+
+Add a short definition (1–2 sentences) before `@param`:
+
+```javascript
+/**
+ * Build who receives notification emails based on actor role.
+ * Admin actors get audit recipients only; others also get self and stakeholders.
+ *
+ * @param {{ actor?: object, selfEmail?: string, ... }} params
+ * @returns {{ adminAudit: string[], self: string[], stakeholders: string[] }}
+ */
+```
+
+## Rules
+
+- Always include a definition line — never `@param`-only blocks
+- Keep simple helpers to one line; use 1–2 sentences when behavior or routing is non-obvious
+- Add `@returns` when the return value is not obvious from the definition

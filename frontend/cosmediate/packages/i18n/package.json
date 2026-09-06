@@ -1,0 +1,38 @@
+{
+  "name": "@cosmediate/i18n",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.tsx",
+    "./server": "./src/server.ts",
+    "./locales": "./src/locales.ts",
+    "./messages/en": "./src/messages/en.ts",
+    "./messages/nl": "./src/messages/nl.ts",
+    "./messages/de": "./src/messages/de.ts",
+    "./messages/fr": "./src/messages/fr.ts",
+    "./messages/it": "./src/messages/it.ts",
+    "./messages/el": "./src/messages/el.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "next": "16.1.0",
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@cosmediate/eslint-config": "workspace:*",
+    "@cosmediate/typescript-config": "workspace:*",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "eslint": "^9.32.0",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@cosmediate/config": "workspace:*"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

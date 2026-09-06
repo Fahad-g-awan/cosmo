@@ -1,0 +1,66 @@
+.tiptap-editor {
+  color: #333;
+}
+
+/* bold always visible */
+.tiptap-editor strong,
+.tiptap-editor b {
+  font-weight: 700;
+  color: inherit;
+}
+
+/* headings visible */
+.tiptap-editor h1 {
+  font-size: 2em;
+  font-weight: 700;
+  color: #111;
+  line-height: 1.3;
+}
+.tiptap-editor h2 {
+  font-size: 1.5em;
+  font-weight: 600;
+  color: #111;
+  line-height: 1.35;
+}
+.tiptap-editor h3 {
+  font-size: 1.25em;
+  font-weight: 600;
+  color: #111;
+  line-height: 1.4;
+}
+
+/* Viewer */
+.tiptap-viewer img,
+.tiptap-editor img {
+  border-radius: 8px;
+  max-width: 100%;
+  height: auto;
+}
+
+/* image alignment for exported HTML + viewer */
+.tiptap-viewer img[data-alignment="left"],
+.tiptap-editor img[data-alignment="left"] {
+  float: left;
+  margin-right: 1.5em;
+  margin-bottom: 1em;
+}
+.tiptap-viewer img[data-alignment="right"],
+.tiptap-editor img[data-alignment="right"] {
+  float: right;
+  margin-left: 1.5em;
+  margin-bottom: 1em;
+}
+.tiptap-viewer img[data-alignment="center"],
+.tiptap-editor img[data-alignment="center"] {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 1.5em;
+}
+
+/* clear floats at end */
+.tiptap-viewer:after {
+  content: "";
+  display: table;
+  clear: both;
+}

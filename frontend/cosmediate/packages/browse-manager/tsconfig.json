@@ -1,0 +1,12 @@
+{
+  "extends": "@cosmediate/typescript-config/react-library.json",
+  "compilerOptions": {
+    // "baseUrl": ".",
+    "types": ["node"],
+    "paths": {
+      "@browse-manager/*": ["./src/*"]
+    }
+  },
+  "include": ["."],
+  "exclude": ["node_modules", "dist"]
+}

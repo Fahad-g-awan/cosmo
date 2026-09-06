@@ -1,0 +1,15 @@
+{
+  "tailwindCSS.experimental.configFile": "frontend/cosmediate/packages/ui/src/styles/globals.css",
+  "tailwindCSS.includeLanguages": {
+    "typescript": "javascript",
+    "typescriptreact": "javascript"
+  },
+  "tailwindCSS.files.exclude": [
+    "**/backend/**",
+    "**/node_modules/**",
+    "**/.git/**",
+    "**/dist/**",
+    "**/build/**"
+  ],
+  "tailwindCSS.classAttributes": ["class", "className", "classList", "ngClass"]
+}

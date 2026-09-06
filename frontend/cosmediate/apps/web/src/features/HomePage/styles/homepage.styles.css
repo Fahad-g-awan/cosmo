@@ -1,0 +1,21 @@
+.testimonila-bg {
+  background: linear-gradient(
+    86.94deg,
+    #fee7e7 0%,
+    #e7eff7 49.5%,
+    #e4deff 100%
+  );
+}
+
+.book-btn {
+  background: linear-gradient(
+    86.94deg,
+    #fee7e7 0%,
+    #e7eff7 49.5%,
+    #e4deff 100%
+  );
+}
+
+.service-section-overlay {
+  background: linear-gradient(180deg, rgba(32, 31, 149, 0) 0%, #282754 100%);
+}
